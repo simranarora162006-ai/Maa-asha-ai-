@@ -1,0 +1,76 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Common Helper Functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isAshaWorker() {
+      return isAuthenticated() && (
+        request.auth.token.role == 'asha_worker' || 
+        getUserData().role == 'asha_worker'
+      );
+    }
+
+    function isSameVillage(docVillage) {
+      return isAuthenticated() && (
+        getUserData().village == docVillage ||
+        request.auth.token.village == docVillage
+      );
+    }
+
+    // USERS COLLECTION
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated();
+      allow update: if isOwner(userId) || isAshaWorker();
+      allow delete: if false;
+    }
+
+    // MOTHERS COLLECTION (Village Isolation Gate)
+    match /mothers/{motherId} {
+      allow read: if isAuthenticated() && (
+        resource == null ||
+        resource.data.userId == request.auth.uid ||
+        resource.data.assignedAshaId == request.auth.uid ||
+        isSameVillage(resource.data.village) ||
+        isAshaWorker()
+      );
+
+      allow create: if isAuthenticated() && (
+        request.resource.data.name is string &&
+        request.resource.data.phone is string
+      );
+
+      allow update: if isAuthenticated() && (
+        resource.data.userId == request.auth.uid ||
+        resource.data.assignedAshaId == request.auth.uid ||
+        isSameVillage(resource.data.village) ||
+        isAshaWorker()
+      );
+
+      allow delete: if isAshaWorker();
+    }
+
+    // HOME VISITS COLLECTION
+    match /home_visits/{visitId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    // VISIT LOGS COLLECTION
+    match /visit_logs/{logId} {
+      allow read, create, update: if isAuthenticated();
+      allow delete: if isAshaWorker();
+    }
+  }
+}

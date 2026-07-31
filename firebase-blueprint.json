@@ -1,0 +1,63 @@
+{
+  "entities": {
+    "users": {
+      "title": "Users",
+      "description": "User profiles for Pregnant Women, ASHA Workers, and Admins",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "displayName": { "type": "string" },
+        "role": { "type": "string", "enum": ["pregnant_woman", "asha_worker", "admin"] },
+        "status": { "type": "string", "enum": ["approved", "pending_approval", "rejected"] },
+        "phone": { "type": "string" },
+        "village": { "type": "string" },
+        "district": { "type": "string" },
+        "dueDate": { "type": "string" },
+        "trimester": { "type": "number" },
+        "ashaWorkerId": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["uid", "email", "role", "status"]
+    },
+    "mothers": {
+      "title": "Mothers",
+      "description": "Maternal health records managed by ASHA workers",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "age": { "type": "number" },
+        "phone": { "type": "string" },
+        "village": { "type": "string" },
+        "dueDate": { "type": "string" },
+        "currentWeek": { "type": "number" },
+        "highRisk": { "type": "boolean" },
+        "highRiskReason": { "type": "string" },
+        "assignedAshaId": { "type": "string" },
+        "bloodGroup": { "type": "string" },
+        "hemoglobin": { "type": "number" },
+        "ancVisitsCompleted": { "type": "number" },
+        "jsyRegistered": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["name", "village", "dueDate"]
+    },
+    "visit_logs": {
+      "title": "Visit Logs",
+      "description": "Home ANC visit logs recorded by ASHA workers",
+      "properties": {
+        "id": { "type": "string" },
+        "motherId": { "type": "string" },
+        "ashaId": { "type": "string" },
+        "date": { "type": "string" },
+        "weightKg": { "type": "number" },
+        "bp": { "type": "string" },
+        "hbGdl": { "type": "number" },
+        "ironTabletsGiven": { "type": "number" },
+        "dangerSignsObserved": { "type": "array", "items": { "type": "string" } },
+        "nextVisitDate": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["motherId", "ashaId", "date"]
+    }
+  }
+}

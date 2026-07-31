@@ -1,0 +1,6 @@
+{
+  "name": "Maa Asha AI",
+  "description": "Maternal health and ASHA worker digital assistant supporting English & Hindi, role-based authentication, care dashboards, and health tracking.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
